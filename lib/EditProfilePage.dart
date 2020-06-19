@@ -84,7 +84,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'email': _emailTFC.text,
       'phone': _user.phoneNumber,
       'bornDate': _bornDateTFC.text,
-      'photoURL': photoURL
+      'photoURL': photoURL,
+      'id': _user.uid
     };
     Firestore.instance.collection("users").document(_user.uid).setData(_userdata).then((value) {
       UserUpdateInfo updateInfo = UserUpdateInfo();

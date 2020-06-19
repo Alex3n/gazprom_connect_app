@@ -44,8 +44,8 @@ Scaffold buildMyScaffold(BuildContext context, Widget body, String title,
                   title: Text('Команда'),
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.access_alarms),
-                  title: Text('Билеты'),
+                  icon: Icon(Icons.chat),
+                  title: Text('Чаты'),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
@@ -63,7 +63,7 @@ Scaffold buildMyScaffold(BuildContext context, Widget body, String title,
                     _routeName = '/team';
                     break;
                   case 2:
-                    _routeName = '/tickets';
+                    _routeName = '/chats';
                     break;
                   case 3:
                     _routeName = '/profile';

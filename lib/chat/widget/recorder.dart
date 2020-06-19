@@ -20,6 +20,8 @@ class _RecorderPageState extends State<RecorderPage> {
   Timer _t;
   Widget _buttonIcon = Icon(Icons.do_not_disturb_on);
   String _alert = "";
+  AudioPlayer player = AudioPlayer();
+  bool isPlaying = false;
 
   @override
   void initState() {
@@ -123,8 +125,11 @@ class _RecorderPageState extends State<RecorderPage> {
   }
 
   void _play() {
-    AudioPlayer player = AudioPlayer();
-    player.play(_recording.path, isLocal: true);
+    if (isPlaying) player.pause();
+    else player.play(_recording.path, isLocal: true);
+    setState(() {
+      isPlaying = !isPlaying;
+    });
   }
 
   Widget _playerIcon(RecordingStatus status) {
@@ -234,7 +239,7 @@ class _RecorderPageState extends State<RecorderPage> {
                 onPressed: _recording?.status == RecordingStatus.Stopped
                     ? _play
                     : null,
-                child: Icon(Icons.play_arrow),
+                child: isPlaying? Icon(Icons.pause): Icon(Icons.play_arrow),
               ),
               FloatingActionButton(
                 backgroundColor: _recording?.status != RecordingStatus.Stopped

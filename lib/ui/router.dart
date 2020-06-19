@@ -1,6 +1,7 @@
 import 'package:gazpromconnect/SignInPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gazpromconnect/chat/home.dart';
 
 import '../SplashPage.dart';
 import './views/addProduct.dart';
@@ -37,6 +38,9 @@ class Router {
       case '/splashPage':
         return MaterialPageRoute(builder: (_) => SplashPage());
       case '/watchplace':
+
+      case '/chats':
+        return MaterialPageRoute(builder: (_) => HomeScreen());
 
 
 

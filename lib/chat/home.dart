@@ -19,21 +19,21 @@ import '../main.dart';
 
 
 class HomeScreen extends StatefulWidget {
-  final String currentUserId;
+//  final String currentUserId;
 
-  HomeScreen({Key key, @required this.currentUserId}) : super(key: key);
+  HomeScreen({Key key, /*@required this.currentUserId*/}) : super(key: key);
 
   @override
-  State createState() => HomeScreenState(currentUserId: currentUserId);
+  State createState() => HomeScreenState(/*currentUserId: currentUserId*/);
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  HomeScreenState({Key key, @required this.currentUserId});
+  HomeScreenState({Key key, /*@required this.currentUserId*/});
 
-  final String currentUserId;
+  final String currentUserId = user.uid.toString();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final GoogleSignIn googleSignIn = GoogleSignIn();
+//  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
@@ -44,8 +44,8 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    registerNotification();
-    configLocalNotification();
+//    registerNotification(); //todo
+//    configLocalNotification(); //todo
   }
 
   void registerNotification() {
@@ -88,6 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   void showNotification(message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      //todo
       Platform.isAndroid ? 'com.dfa.flutterchatdemo' : 'com.duytq.flutterchatdemo',
       'Flutter chat demo',
       'your channel description',
@@ -113,10 +114,10 @@ class HomeScreenState extends State<HomeScreen> {
 //        payload: 'item x');
   }
 
-  Future<bool> onBackPress() {
-    openDialog();
-    return Future.value(false);
-  }
+//  Future<bool> onBackPress() {
+//    openDialog();
+//    return Future.value(false);
+//  }
 
   Future<Null> openDialog() async {
     switch (await showDialog(
@@ -208,8 +209,8 @@ class HomeScreenState extends State<HomeScreen> {
     });
 
     await FirebaseAuth.instance.signOut();
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
+//    await googleSignIn.disconnect();
+//    await googleSignIn.signOut();
 
     this.setState(() {
       isLoading = false;
@@ -255,42 +256,40 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: WillPopScope(
-        child: Stack(
-          children: <Widget>[
-            // List
-            Container(
-              child: StreamBuilder(
-                stream: Firestore.instance.collection('users').snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                      ),
-                    );
-                  } else {
-                    return ListView.builder(
-                      padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data.documents[index]),
-                      itemCount: snapshot.data.documents.length,
-                    );
-                  }
-                },
-              ),
+      body: Stack(
+        children: <Widget>[
+          // List
+          Container(
+            child: StreamBuilder(
+              stream: Firestore.instance.collection('users').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    padding: EdgeInsets.all(10.0),
+                    itemBuilder: (context, index) => buildItem(context, snapshot.data.documents[index]),
+                    itemCount: snapshot.data.documents.length,
+                  );
+                }
+              },
             ),
+          ),
 
-            // Loading
-            Positioned(
-              child: isLoading ? const Loading() : Container(),
-            )
-          ],
-        ),
-        onWillPop: onBackPress,
+          // Loading
+          Positioned(
+            child: isLoading ? const Loading() : Container(),
+          )
+        ],
       ),
     );
   }
 
+  //TODO в данный момент чат - другой пользователь
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
     if (document['id'] == currentUserId) {
       return Container();
@@ -330,7 +329,7 @@ class HomeScreenState extends State<HomeScreen> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          'Nickname: ${document['nickname']}',
+                          'Name: ${document['name']}',
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,
