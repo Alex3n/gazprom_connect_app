@@ -17,12 +17,14 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Chat extends StatelessWidget {
+  final String title;
   final String peerId;
   final String peerAvatar;
   final String userId;
 
   Chat(
       {Key key,
+      @required this.title,
       @required this.peerId,
       @required this.peerAvatar,
       @required this.userId})
@@ -33,7 +35,7 @@ class Chat extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'CHAT',
+          title,
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -290,7 +292,8 @@ class ChatScreenState extends State<ChatScreen> {
                       : Container(
                           padding: EdgeInsets.all(8),
                           child: FloatingActionButton(
-                            onPressed: () => _playAudioMessage(document['content']),
+                            onPressed: () =>
+                                _playAudioMessage(document['content']),
                             child: Icon(Icons.play_arrow),
                           )),
         ],
@@ -409,7 +412,8 @@ class ChatScreenState extends State<ChatScreen> {
                             : Container(
                                 padding: EdgeInsets.all(8),
                                 child: FloatingActionButton(
-                                  onPressed: () => _playAudioMessage(document['content']),
+                                  onPressed: () =>
+                                      _playAudioMessage(document['content']),
                                   child: Icon(Icons.play_arrow),
                                 )),
               ],

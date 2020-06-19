@@ -377,6 +377,7 @@ class HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => Chat(
+                    title: document['name'],
                       peerId: document.documentID,
                       peerAvatar: document['photoUrl'],
                       userId: currentUserId)));
