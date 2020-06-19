@@ -81,6 +81,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLoading;
   bool isShowSticker;
   String imageUrl;
+  bool isPlaying = false;
 
   AudioPlayer player = AudioPlayer();
 
@@ -289,8 +290,7 @@ class ChatScreenState extends State<ChatScreen> {
                       : Container(
                           padding: EdgeInsets.all(8),
                           child: FloatingActionButton(
-                            onPressed: () => player.play(document['content'],
-                                isLocal: false),
+                            onPressed: () => _playAudioMessage(document['content']),
                             child: Icon(Icons.play_arrow),
                           )),
         ],
@@ -409,9 +409,7 @@ class ChatScreenState extends State<ChatScreen> {
                             : Container(
                                 padding: EdgeInsets.all(8),
                                 child: FloatingActionButton(
-                                  onPressed: () => player.play(
-                                      document['content'],
-                                      isLocal: false),
+                                  onPressed: () => _playAudioMessage(document['content']),
                                   child: Icon(Icons.play_arrow),
                                 )),
               ],
@@ -436,6 +434,16 @@ class ChatScreenState extends State<ChatScreen> {
         margin: EdgeInsets.only(bottom: 10.0),
       );
     }
+  }
+
+  void _playAudioMessage(String url) {
+    if (isPlaying)
+      player.stop();
+    else
+      player.play(url, isLocal: false);
+    setState(() {
+      isPlaying = !isPlaying;
+    });
   }
 
   bool isLastMessageLeft(int index) {
