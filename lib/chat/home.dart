@@ -377,9 +377,9 @@ class HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => Chat(
-                        peerId: document.documentID,
-                        peerAvatar: document['photoUrl'],
-                      )));
+                      peerId: document.documentID,
+                      peerAvatar: document['photoUrl'],
+                      userId: currentUserId)));
         },
         color: greyColor2,
         padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
