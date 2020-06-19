@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "425240951547",
+    "firebase_url": "https://gazpromconnect.firebaseio.com",
+    "project_id": "gazpromconnect",
+    "storage_bucket": "gazpromconnect.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425240951547:android:5ba2d98e2cd1ae61a28e5e",
+        "android_client_info": {
+          "package_name": "com.example.gazpromconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425240951547-svf94hev4cmga7uvbsfq4fej6jgdpqdo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiV6veMmVif42EBDcBjd2-91W0Qbm3B0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "425240951547-svf94hev4cmga7uvbsfq4fej6jgdpqdo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
