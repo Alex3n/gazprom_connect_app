@@ -2,18 +2,27 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RecorderPage extends StatefulWidget {
-  RecorderPage({Key key}) : super(key: key);
+  RecorderPage(
+      {Key key, this.groupChatId, this.userId, this.peerId, this.userName})
+      : super(key: key);
+  final String groupChatId;
+  final String userId;
+  final String peerId;
+  final String userName;
 
   @override
   _RecorderPageState createState() => _RecorderPageState();
 }
-
+//todo удаление неотправленных записей
 class _RecorderPageState extends State<RecorderPage> {
   FlutterAudioRecorder _recorder;
   Recording _recording;
@@ -53,7 +62,6 @@ class _RecorderPageState extends State<RecorderPage> {
         break;
     }
 
-    // 刷新按钮
     setState(() {
       _buttonIcon = _playerIcon(_recording.status);
     });
@@ -71,7 +79,10 @@ class _RecorderPageState extends State<RecorderPage> {
     // can add extension like ".mp4" ".wav" ".m4a" ".aac"
     customPath = appDocDirectory.path +
         customPath +
-        DateTime.now().millisecondsSinceEpoch.toString();
+        DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString();
 
     // .wav <---> AudioFormat.WAV
     // .mp4 .m4a .aac <---> AudioFormat.AAC
@@ -125,8 +136,10 @@ class _RecorderPageState extends State<RecorderPage> {
   }
 
   void _play() {
-    if (isPlaying) player.pause();
-    else player.play(_recording.path, isLocal: true);
+    if (isPlaying)
+      player.pause();
+    else
+      player.play(_recording.path, isLocal: true);
     setState(() {
       isPlaying = !isPlaying;
     });
@@ -159,69 +172,26 @@ class _RecorderPageState extends State<RecorderPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-//          Text(
-//            'File',
-//            style: Theme.of(context).textTheme.title,
-//          ),
-//          SizedBox(
-//            height: 5,
-//          ),
-//          Text(
-//            '${_recording?.path ?? "-"}',
-//            style: Theme.of(context).textTheme.body1,
-//          ),
-//          SizedBox(
-//            height: 20,
-//          ),
           Text(
             'Аудио сообщение',
-            style: Theme.of(context).textTheme.title,
+            style: Theme
+                .of(context)
+                .textTheme
+                .title,
           ),
           SizedBox(
             height: 5,
           ),
           Text(
             '${_recording?.duration ?? "-"}',
-            style: Theme.of(context).textTheme.body1,
+            style: Theme
+                .of(context)
+                .textTheme
+                .body1,
           ),
           SizedBox(
             height: 20,
           ),
-//          Text(
-//            'Metering Level - Average Power',
-//            style: Theme.of(context).textTheme.title,
-//          ),
-//          SizedBox(
-//            height: 5,
-//          ),
-//          Text(
-//            '${_recording?.metering?.averagePower ?? "-"}',
-//            style: Theme.of(context).textTheme.body1,
-//          ),
-//          SizedBox(
-//            height: 20,
-//          ),
-//          Text(
-//            'Status',
-//            style: Theme.of(context).textTheme.title,
-//          ),
-//          SizedBox(
-//            height: 5,
-//          ),
-//          Text(
-//            '${_recording?.status ?? "-"}',
-//            style: Theme.of(context).textTheme.body1,
-//          ),
-//          SizedBox(
-//            height: 20,
-//          ),
-//          RaisedButton(
-//            child: Text('Play'),
-//            disabledTextColor: Colors.white,
-//            disabledColor: Colors.grey.withOpacity(0.5),
-//            onPressed:
-//            _recording?.status == RecordingStatus.Stopped ? _play : null,
-//          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
@@ -239,13 +209,15 @@ class _RecorderPageState extends State<RecorderPage> {
                 onPressed: _recording?.status == RecordingStatus.Stopped
                     ? _play
                     : null,
-                child: isPlaying? Icon(Icons.pause): Icon(Icons.play_arrow),
+                child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
               ),
               FloatingActionButton(
                 backgroundColor: _recording?.status != RecordingStatus.Stopped
                     ? Colors.grey.withOpacity(0.5)
                     : null,
-                onPressed: () {},
+                onPressed: () {
+                  _sendMessage();
+                },
                 child: Icon(Icons.send),
               ),
             ],
@@ -253,16 +225,65 @@ class _RecorderPageState extends State<RecorderPage> {
           _alert.isEmpty
               ? Container()
               : Text(
-                  '${_alert ?? ""}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .title
-                      .copyWith(color: Colors.red),
-                ),
+            '${_alert ?? ""}',
+            style: Theme
+                .of(context)
+                .textTheme
+                .title
+                .copyWith(color: Colors.red),
+          ),
         ],
       ),
-
       // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Future<void> _sendMessage() async {
+    print("${_recording.path}");
+
+    File audioFile = File(_recording.path);
+
+    String fileName = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
+    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+    StorageUploadTask uploadTask = reference.putFile(audioFile);
+    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+      onSendMessage(downloadUrl);
+    }, onError: (err) {
+      Fluttertoast.showToast(msg: 'ошибка');
+    });
+    audioFile.delete();
+    Navigator.pop(context);
+  }
+
+  void onSendMessage(String content) {
+    var documentReference = Firestore.instance
+        .collection('messages')
+        .document(widget.groupChatId)
+        .collection(widget.groupChatId)
+        .document(DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString());
+
+    Firestore.instance.runTransaction((transaction) async {
+      await transaction.set(
+        documentReference,
+        {
+          'idFrom': widget.userId,
+          'idTo': widget.peerId,
+          'name': widget.userName,
+          'timestamp': DateTime
+              .now()
+              .millisecondsSinceEpoch
+              .toString(),
+          'content': content,
+          'type': 3
+        },
+      );
+    });
   }
 }

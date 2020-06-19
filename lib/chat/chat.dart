@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gazpromconnect/chat/const.dart';
 import 'package:gazpromconnect/chat/widget/full_photo.dart';
@@ -79,6 +81,8 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLoading;
   bool isShowSticker;
   String imageUrl;
+
+  AudioPlayer player = AudioPlayer();
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -270,17 +274,25 @@ class ChatScreenState extends State<ChatScreen> {
                           right: 10.0),
                     )
                   // Sticker
-                  : Container(
-                      child: Image.asset(
-                        'images/${document['content']}.gif',
-                        width: 100.0,
-                        height: 100.0,
-                        fit: BoxFit.cover,
-                      ),
-                      margin: EdgeInsets.only(
-                          bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                          right: 10.0),
-                    ),
+                  : document['type'] == 2
+                      ? Container(
+                          child: Image.asset(
+                            'images/${document['content']}.gif',
+                            width: 100.0,
+                            height: 100.0,
+                            fit: BoxFit.cover,
+                          ),
+                          margin: EdgeInsets.only(
+                              bottom: isLastMessageRight(index) ? 20.0 : 10.0,
+                              right: 10.0),
+                        )
+                      : Container(
+                          padding: EdgeInsets.all(8),
+                          child: FloatingActionButton(
+                            onPressed: () => player.play(document['content'],
+                                isLocal: false),
+                            child: Icon(Icons.play_arrow),
+                          )),
         ],
         mainAxisAlignment: MainAxisAlignment.end,
       );
@@ -381,17 +393,27 @@ class ChatScreenState extends State<ChatScreen> {
                             ),
                             margin: EdgeInsets.only(left: 10.0),
                           )
-                        : Container(
-                            child: Image.asset(
-                              'images/${document['content']}.gif',
-                              width: 100.0,
-                              height: 100.0,
-                              fit: BoxFit.cover,
-                            ),
-                            margin: EdgeInsets.only(
-                                bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                                right: 10.0),
-                          ),
+                        : document['type'] == 2
+                            ? Container(
+                                child: Image.asset(
+                                  'images/${document['content']}.gif',
+                                  width: 100.0,
+                                  height: 100.0,
+                                  fit: BoxFit.cover,
+                                ),
+                                margin: EdgeInsets.only(
+                                    bottom:
+                                        isLastMessageRight(index) ? 20.0 : 10.0,
+                                    right: 10.0),
+                              )
+                            : Container(
+                                padding: EdgeInsets.all(8),
+                                child: FloatingActionButton(
+                                  onPressed: () => player.play(
+                                      document['content'],
+                                      isLocal: false),
+                                  child: Icon(Icons.play_arrow),
+                                )),
               ],
             ),
 
@@ -713,7 +735,14 @@ class ChatScreenState extends State<ChatScreen> {
         builder: (context) {
           return SimpleDialog(
             backgroundColor: Colors.white.withOpacity(0.8),
-            children: <Widget>[RecorderPage()],
+            children: <Widget>[
+              RecorderPage(
+                groupChatId: groupChatId,
+                userId: userId,
+                peerId: peerId,
+                userName: userName,
+              )
+            ],
           );
         });
   }
