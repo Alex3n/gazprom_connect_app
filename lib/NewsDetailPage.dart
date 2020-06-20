@@ -166,7 +166,7 @@ class NewsDetailState extends State<NewsDetailPage>
                   new GestureDetector(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 10.0, 4.0, 10.0),
-                      child: new Icon(Icons.access_alarms,
+                      child: new Icon(Icons.favorite,
                           color: _color, size: 28.0),
                     ),
                     onTap: () {

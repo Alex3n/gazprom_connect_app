@@ -349,7 +349,7 @@ class _NewsPageState extends State<NewsPage> {
                 new GestureDetector(
                   child: Padding(
                     padding:  const EdgeInsets.fromLTRB(10.0, 10.0, 4.0, 10.0),
-                    child: new Icon(Icons.access_alarms,
+                    child: new Icon(Icons.favorite,
                         color: _result[document.documentID]
                             ? Color(0xFFFF0000)
                             : Theme.of(context).tabBarTheme.unselectedLabelColor,

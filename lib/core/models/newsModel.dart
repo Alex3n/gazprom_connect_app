@@ -7,6 +7,7 @@ class News {
   String date;
   List<String> like;
 
+
   News(this.id, this.title, this.description, this.date, this.like);
 
   News.fromMap(Map snapshot, String id)

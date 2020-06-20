@@ -12,7 +12,7 @@ SharedPreferences prefs;
 FirebaseUser user;
 Map <String, Object> userdata;
 bool isDarkTheme;
-
+Firestore store = Firestore.instance;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
